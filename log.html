@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Login</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap');
+
+    body {
+      margin: 0;
+      font-family: 'Noto Sans', sans-serif;
+      overflow: hidden;
+    }
+
+    body * {
+      box-sizing: border-box;
+    }
+
+    .main-login {
+      width: 100vw;
+      height: 100vh;
+      background: #201b2c;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .left-login {
+      width: 50vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .left-login > h1 {
+      color: #77ffc0;
+      font-size: 2.5vw;
+    }
+
+    .left-login-image {
+      width: 35vw;
+    }
+
+    .right-login {
+      width: 50vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card-login {
+      width: 60%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      padding: 30px 35px;
+      background: #2f2841;
+      border-radius: 20px;
+      box-shadow: 0px 10px 40px #00000056;
+    }
+
+    .card-login > h1 {
+      color: #00ff88;
+      font-weight: 800;
+      margin: 0;
+    }
+
+    .textfield {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      margin: 10px 0px;
+    }
+
+    .textfield > input {
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      padding: 15px;
+      background: #514869;
+      color: #f0ffffde;
+      font-size: 12pt;
+      box-shadow: 0px 10px 40px #00000056;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .textfield > label {
+      color: #f0ffffde;
+      margin-bottom: 10px;
+    }
+
+    .textfield > input::placeholder {
+      color: #f0ffff94;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 16px 0;
+      margin: 25px 0 10px;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 3px;
+      color: #2b134b;
+      background: #00ff88;
+      cursor: pointer;
+      box-shadow: 0px 10px 40px -12px #00ff8052;
+    }
+
+    .btn-register {
+      width: 100%;
+      padding: 16px 0;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 3px;
+      color: #00ff88;
+      background: transparent;
+      cursor: pointer;
+      box-shadow: none;
+      border: 2px solid #00ff88;
+    }
+
+    .btn-register:hover {
+      background: #00ff88;
+      color: #2b134b;
+    }
+
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .loading-spinner {
+      border: 16px solid #f3f3f3;
+      border-top: 16px solid #00ff88;
+      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media only screen and (max-width: 950px){
+      .card-login{
+        width: 85%;
+      }
+    }
+
+    @media only screen and (max-width: 600px){
+      .main-login{
+        flex-direction: column;
+      }
+
+      .left-login > h1 {
+        display: none;
+      }
+
+      .left-login {
+        width: 100%;
+        height: auto;
+      }
+
+      .right-login {
+        width: 100%;
+        height: auto;
+      }
+      
+      .left-login-image {
+        width: 40vh;
+      }
+
+      .card-login {
+        width: 90%;
+      }
+    }
+
+    .copyright {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      color: #77ffc0;
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .ban-message {
+      display: none;
+      padding: 20px;
+      margin-top: 20px;
+      background: #ff4d4d;
+      color: white;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .error-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1001;
+    }
+
+    .error-content {
+      background: #2f2841;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      width: 80%;
+      max-width: 400px;
+      color: #f0ffffde;
+      box-shadow: 0px 10px 40px #00000056;
+    }
+
+    .error-content h2 {
+      margin: 0;
+      color: #ff4d4d;
+    }
+
+    .error-content p {
+      margin: 10px 0;
+    }
+
+    .error-content button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: #00ff88;
+      color: #2b134b;
+      cursor: pointer;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .error-content button:hover {
+      background: #00e07b;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Roda de loading -->
+  <div class="loading-overlay" id="loading-overlay">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <!-- Mensagem de conta banida -->
+  <div class="ban-message" id="ban-message">
+    Sua conta foi banida permanentemente. Se foi um engano, contate o suporte.
+  </div>
+
+  <!-- Modal de erro -->
+  <div class="error-modal" id="error-modal">
+    <div class="error-content">
+      <h2 id="error-title">Erro</h2>
+      <p id="error-message">Mensagem de erro vai aqui.</p>
+      <button onclick="closeErrorModal()">Fechar</button>
+    </div>
+  </div>
+
+  <!-- Conteúdo principal -->
+  <div class="main-login" id="main-login">
+    <div class="left-login">
+      <h1>Faça login<br>E entre para o nosso time</h1>
+      <img src="https://raw.githubusercontent.com/devandresilva/loginscreen/b6753e8d33c1b04f910de033d0cf72388b77904b/person-working.svg" class="left-login-image" alt="Pessoa trabalhando">
+    </div>
+    <div class="right-login">
+      <div class="card-login">
+        <h1>LOGIN</h1>
+        <div class="textfield">
+          <label for="usuario">Usuário</label>
+          <input type="text" id="usuario" name="usuario" placeholder="Usuário">
+        </div>
+        <div class="textfield">
+          <label for="password">Senha</label>
+          <input type="password" id="password" name="password" placeholder="Senha">
+        </div>
+        <button class="btn-login" onclick="login()">Login</button>
+        <button class="btn-register" onclick="register()">Criar Conta</button>
+      </div>
+    </div>
+  </div>
+
+    &copy; 2024 Rstark. Todos os direitos reservados.
+  </div>
+
+  <script>
+    // Função para abrir o modal de erro
+    function openErrorModal(title, message) {
+      document.getElementById('error-title').innerText = title;
+      document.getElementById('error-message').innerText = message;
+      document.getElementById('error-modal').style.display = 'flex';
+    }
+
+    // Função para fechar o modal de erro
+    function closeErrorModal() {
+      document.getElementById('error-modal').style.display = 'none';
+    }
+
+    // Função de login
+    function login() {
+      const usuario = document.getElementById('usuario').value;
+      const senha = document.getElementById('password').value;
+
+      // Exemplo de validação
+      if (usuario === 'admin' && senha === 'senhaAdmin') {
+        window.location.href = 'ty.html'; // Redireciona para a página de admin
+      } else if (usuario === 'funcionario' && senha === 'senhaFuncionario') {
+        window.location.href = 't.html'; // Redireciona para a página de funcionário
+      } else {
+        openErrorModal('Erro de Login', 'Usuário ou senha inválidos.');
+      }
+    }
+
+    // Função de registro
+    function register() {
+      window.location.href = 'pag4.html'; // Redireciona para a página de registro
+    }
+  </script>
+</body>
+</html>
+
