@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criar Conta</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap');
+
+    body {
+      margin: 0;
+      font-family: 'Noto Sans', sans-serif;
+      background: #201b2c;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .registration-card {
+      width: 400px;
+      padding: 30px;
+      background: #2f2841;
+      border-radius: 20px;
+      box-shadow: 0px 10px 40px #00000056;
+      color: #f0ffffde;
+      position: relative;
+    }
+
+    .registration-card > h1 {
+      color: #00ff88;
+      font-weight: 800;
+      margin: 0 0 20px;
+    }
+
+    .textfield {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin: 10px 0;
+    }
+
+    .textfield > input {
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      padding: 15px;
+      background: #514869;
+      color: #f0ffffde;
+      font-size: 12pt;
+      box-shadow: 0px 10px 40px #00000056;
+      outline: none;
+      box-sizing: border-box;
+    }
+
+    .textfield > label {
+      color: #f0ffffde;
+      margin-bottom: 10px;
+    }
+
+    .textfield > input::placeholder {
+      color: #f0ffff94;
+    }
+
+    .btn-register {
+      width: 100%;
+      padding: 16px 0;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 3px;
+      color: #2b134b;
+      background: #00ff88;
+      cursor: pointer;
+      box-shadow: 0px 10px 40px -12px #00ff8052;
+    }
+
+    .btn-back {
+      width: 100%;
+      padding: 16px 0;
+      margin-top: 10px;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 3px;
+      color: #fff;
+      background: #ff6347;
+      cursor: pointer;
+      box-shadow: 0px 10px 40px -12px #ff634752;
+    }
+
+    .message-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .message-box {
+      background: #ff4c4c;
+      color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+      font-size: 16px;
+      text-align: center;
+    }
+
+    /* Spinner */
+    .spinner-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .spinner {
+      border: 8px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 8px solid #00ff88;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Spinner Overlay -->
+  <div class="spinner-overlay" id="spinner-overlay" style="display: none;">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="registration-card" id="registration-card">
+    <h1>Criar Conta</h1>
+    <div class="textfield">
+      <label for="registration-code">Código de cadastro da empresa (para Funcionário)</label>
+      <input type="text" id="registration-code" name="registration-code" placeholder="Inserir Código">
+    </div>
+    <div class="textfield">
+      <label for="admin-password">Senha da empresa (para Admin)</label>
+      <input type="password" id="admin-password" name="admin-password" placeholder="Senha Admin">
+    </div>
+    <div class="textfield">
+      <label for="new-usuario">Usuário</label>
+      <input type="text" id="new-usuario" name="new-usuario" placeholder="Usuário">
+    </div>
+    <div class="textfield">
+      <label for="new-password">Senha</label>
+      <input type="password" id="new-password" name="new-password" placeholder="Senha">
+    </div>
+    <div class="textfield">
+      <label for="confirm-password">Confirmar Senha</label>
+      <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirmar Senha">
+    </div>
+    <button class="btn-register" onclick="showLoading('register')">Registrar</button>
+    <button class="btn-back" onclick="showLoading('back')">Voltar</button>
+  </div>
+
+  <!-- Mensagem de erro -->
+  <div class="message-overlay" id="message-overlay">
+    <div class="message-box" id="message-box"></div>
+  </div>
+
+  <script>
+    // Exibe o spinner por 5 segundos quando a página carrega
+    window.onload = function() {
+      showLoading();
+    }
+
+    function showLoading(action = '') {
+      document.getElementById('spinner-overlay').style.display = 'flex';
+
+      // Define o tempo de exibição do spinner
+      setTimeout(function() {
+        document.getElementById('spinner-overlay').style.display = 'none';
+
+        if (action === 'register') {
+          registerAccount();
+        } else if (action === 'back') {
+          goBack();
+        }
+      }, action === '' ? 5000 : 3000); // 5 segundos na primeira vez, 3 segundos após ações
+    }
+
+    function registerAccount() {
+      var registrationCode = document.getElementById('registration-code').value;
+      var adminPassword = document.getElementById('admin-password').value;
+      var usuario = document.getElementById('new-usuario').value;
+      var password = document.getElementById('new-password').value;
+      var confirmPassword = document.getElementById('confirm-password').value;
+
+      const validCode = 'G-9000';
+      const adminPasswordCorrect = 'admin123'; // Senha da empresa para Admin
+
+      if (registrationCode !== '' && adminPassword !== '') {
+        showMessage('Você deve fornecer apenas um código ou senha, não ambos.');
+        return;
+      }
+
+      if (registrationCode !== '' && registrationCode !== validCode) {
+        showMessage('Código de cadastro inválido.');
+        return;
+      }
+
+      if (adminPassword !== '' && adminPassword !== adminPasswordCorrect) {
+        showMessage('Senha de admin inválida.');
+        return;
+      }
+
+      if (usuario === '' || password === '' || confirmPassword === '') {
+        showMessage('Todos os campos são obrigatórios.');
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showMessage('As senhas não coincidem.');
+        return;
+      }
+
+      var creationDate = new Date().toLocaleString();
+      var accountData = { senha: password, dataCriacao: creationDate };
+
+      if (registrationCode === validCode) {
+        localStorage.setItem(usuario, JSON.stringify({ ...accountData, tipo: 'Funcionário' }));
+        setTimeout(() => window.location.href = 'log.html', 3000); // Redireciona após 3 segundos
+      } else if (adminPassword === adminPasswordCorrect) {
+        localStorage.setItem(usuario, JSON.stringify({ ...accountData, tipo: 'Admin' }));
+        setTimeout(() => window.location.href = 'log.html', 3000); // Redireciona após 3 segundos
+      }
+    }
+
+    function goBack() {
+      setTimeout(() => window.location.href = 'log.html', 3000); // Redireciona após 3 segundos
+    }
+
+    function showMessage(message) {
+      var messageOverlay = document.getElementById('message-overlay');
+      var messageBox = document.getElementById('message-box');
+
+      messageBox.textContent = message;
+      messageOverlay.style.display = 'flex'; // Mostra a mensagem
+
+      setTimeout(function() {
+        messageOverlay.style.display = 'none'; // Esconde a mensagem após 3 segundos
+      }, 3000); // 3000 milissegundos = 3 segundos
+    }
+  </script>
+
+</body>
+</html>
+
