@@ -246,10 +246,10 @@
 
       if (registrationCode === validCode) {
         localStorage.setItem(usuario, JSON.stringify({ ...accountData, tipo: 'Funcionário' }));
-        setTimeout(() => window.location.href = 'log.html', 3000); // Redireciona após 3 segundos
+        setTimeout(() => window.location.href = 'index.html', 3000); // Redireciona após 3 segundos
       } else if (adminPassword === adminPasswordCorrect) {
         localStorage.setItem(usuario, JSON.stringify({ ...accountData, tipo: 'Admin' }));
-        setTimeout(() => window.location.href = 'log.html', 3000); // Redireciona após 3 segundos
+        setTimeout(() => window.location.href = 'index.html', 3000); // Redireciona após 3 segundos
       }
     }
 
