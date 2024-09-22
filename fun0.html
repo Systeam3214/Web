@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Funcionário</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap');
+
+    body {
+      margin: 0;
+      font-family: 'Noto Sans', sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      padding-bottom: 70px; /* Espaço para a barra de navegação inferior */
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .card h2 {
+      color: #003366;
+      font-size: 1.2em;
+      margin-top: 0;
+    }
+
+    .counter {
+      font-size: 2em;
+      font-weight: bold;
+      color: #003366;
+    }
+
+    .menu-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #003366;
+      color: #ffffff;
+      padding: 10px;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .menu-btn svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 250px;
+      height: 100%;
+      background: #003366;
+      color: #ffffff;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      box-shadow: -2px 0px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .side-menu.active {
+      transform: translateX(0);
+    }
+
+    .side-menu .close-btn {
+      align-self: flex-end;
+      font-size: 1.5em;
+      cursor: pointer;
+    }
+
+    .side-menu a {
+      color: #ffffff;
+      font-size: 1em;
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      transition: color 0.3s;
+    }
+
+    .side-menu a i {
+      margin-right: 10px;
+    }
+
+    .side-menu a:hover {
+      color: #00ff88;
+    }
+
+    .footer {
+      background: #003366;
+      color: #ffffff;
+      text-align: center;
+      padding: 10px;
+      font-size: 0.9em;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .footer a {
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .footer a:hover {
+      color: #00ff88;
+    }
+
+    .info-card {
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .help-btn {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      background: #007bff;
+      color: #ffffff;
+      padding: 10px 20px;
+      border-radius: 50%;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      font-size: 1.2em;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background 0.3s;
+    }
+
+    .help-btn:hover {
+      background: #0056b3;
+    }
+
+    .help-popup {
+      position: fixed;
+      bottom: 120px;
+      right: 20px;
+      background: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+      width: 300px;
+      padding: 20px;
+      display: none;
+      z-index: 1000;
+    }
+
+    .help-popup.active {
+      display: block;
+    }
+
+    /* Estilos do Modal */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 20px;
+      width: 80%;
+      max-width: 600px;
+      position: relative;
+    }
+
+    .modal-content h2 {
+      margin-top: 0;
+      color: #003366;
+    }
+
+    .modal-content .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 1.5em;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="menu-btn" onclick="toggleMenu()">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+    </svg>
+  </div>
+
+  <div class="side-menu" id="side-menu">
+    <div class="close-btn" onclick="toggleMenu()">&times;</div>
+    <a href="pagina_inicial.html"><i class="fas fa-home"></i> Início</a>
+    <a href="tesle5.html"><i class="fas fa-tasks"></i> Chamados</a>
+    <a href="Embrev.html"><i class="fas fa-file-alt"></i> Relatórios</a>
+    <a href="suporte.html"><i class="fas fa-life-ring"></i> Suporte</a>
+    <a href="Embrev.html"><i class="fas fa-cogs"></i> Configurações</a>
+    <a href="#" onclick="openProfileModal()"><i class="fas fa-user"></i> Perfil</a>
+  </div>
+
+  <div class="main-content">
+    <div class="card">
+      <h2>Chamados Pendentes</h2>
+      <div class="counter" id="chamadosCounter">0</div>
+    </div>
+
+    <div class="info-card">
+      <div>
+        <!-- Conteúdo da primeira área principal -->
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div>
+        <!-- Conteúdo da segunda área principal -->
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div>
+        <!-- Conteúdo da terceira área principal -->
+      </div>
+    </div>
+  </div>
+
+  <div class="help-btn" onclick="toggleHelpPopup()">
+    <i class="fas fa-question-circle"></i>
+  </div>
+
+  <div class="help-popup" id="help-popup">
+    <div class="popup-header">
+      <span>Ajuda</span>
+      <div class="close-btn" onclick="toggleHelpPopup()">&times;</div>
+    </div>
+    <div class="popup-content">
+      <p>Como podemos ajudar você?</p>
+    </div>
+    <div class="popup-footer">
+     <button class="btn-continue" onclick="continueHelp()">Continuar</button>
+      <button class="btn-completed" onclick="completeHelp()">Concluído</button>
+    </div>
+  </div>
+
+  <!-- Modal de Perfil -->
+  <div class="modal" id="profile-modal">
+    <div class="modal-content">
+      <div class="close-btn" onclick="closeProfileModal()">&times;</div>
+      <h2>Perfil do Funcionário</h2>
+      <div>
+        <p><strong>Nome:</strong> João da Silva</p>
+        <p><strong>Email:</strong> joao.silva@example.com</p>
+        <p><strong>Departamento:</strong> Suporte Técnico</p>
+        <p><strong>Data de Admissão:</strong> 01/01/2020</p>
+        <p><strong>Telefone:</strong> (11) 1234-5678</p>
+        <!-- Adicione outras informações relevantes aqui -->
+      </div>
+      <button onclick="closeProfileModal()">Fechar</button>
+    </div>
+  </div>
+
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById('side-menu');
+      menu.classList.toggle('active');
+    }
+
+    function toggleHelpPopup() {
+      const popup = document.getElementById('help-popup');
+      popup.classList.toggle('active');
+    }
+
+    function openProfileModal() {
+      const modal = document.getElementById('profile-modal');
+      modal.classList.add('active');
+    }
+
+    function closeProfileModal() {
+      const modal = document.getElementById('profile-modal');
+      modal.classList.remove('active');
+    }
+
+    // Função para atualizar o contador de chamados no painel do funcionário
+    function updateChamadosCounter() {
+      const chamadosCounter = document.getElementById('chamadosCounter');
+      let chamados = localStorage.getItem('callsCount') || 0;  // Obtém o número de chamados do localStorage
+
+      // Atualiza o texto do contador
+      chamadosCounter.innerText = chamados;
+    }
+
+    window.onload = function() {
+      updateChamadosCounter(); // Atualiza o contador de chamados ao carregar a página
+    }
+
+    // Atualizar contador em tempo real
+    setInterval(updateChamadosCounter, 1000); // Verifica a cada segundo se o número mudou
+  </script>
+</body>
+</html>

@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Admin - Contas Cadastradas</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap');
+    @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css');
+
+    body {
+      margin: 0;
+      font-family: 'Noto Sans', sans-serif;
+      background: #f4f6f9;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .main-content {
+      width: 100%;
+      max-width: 900px;
+      padding: 30px;
+      background: #ffffff;
+      border-radius: 15px;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
+      border: 1px solid #ddd;
+    }
+
+    .accounts-card > h1 {
+      color: #003366;
+      font-weight: 700;
+      margin: 0 0 20px;
+      display: flex;
+      align-items: center;
+    }
+
+    .accounts-card > h1 i {
+      margin-right: 10px;
+      font-size: 24px;
+    }
+
+    .account-list {
+      max-height: 350px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+
+    .account-item {
+      background: #f1f1f1;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+      box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .account-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .account-info > span {
+      color: #333;
+      font-size: 14px;
+      margin-bottom: 5px;
+    }
+
+    .account-info i {
+      margin-right: 5px;
+      color: #007bff;
+    }
+
+    .btn-ban {
+      background: #dc3545;
+      border: none;
+      border-radius: 50px;
+      color: #fff;
+      padding: 10px 15px;
+      cursor: pointer;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+      text-transform: uppercase;
+      font-weight: 600;
+      transition: background 0.3s;
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-ban i {
+      margin-right: 8px;
+    }
+
+    .btn-ban:hover {
+      background: #c82333;
+    }
+
+    .account-count {
+      font-weight: 700;
+      color: #003366;
+      font-size: 16px;
+      text-align: right;
+    }
+
+    .no-accounts {
+      text-align: center;
+      color: #666;
+      font-weight: bold;
+    }
+
+    /* Estilos do Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: #ffffff;
+      margin: 10% auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      width: 400px;
+      color: #333;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-content label {
+      font-size: 14px;
+      font-weight: bold;
+      display: block;
+    }
+
+    .modal-content input, .modal-content textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    .ban-permanent {
+      display: flex;
+      align-items: center;
+    }
+
+    .ban-permanent input {
+      margin-right: 10px;
+    }
+
+    .modal-footer {
+      text-align: right;
+    }
+
+    .btn-cancel {
+      background-color: #6c757d;
+      border: none;
+      padding: 8px 12px;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn-cancel:hover {
+      background-color: #5a6268;
+    }
+
+    .btn-confirm {
+      background-color: #007bff;
+      border: none;
+      padding: 8px 12px;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn-confirm:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="main-content">
+    <div id="userSection">
+      <div class="accounts-card" id="accountsCard">
+        <h1><i class="fas fa-users"></i>Contas Registradas</h1>
+        <div id="account-list" class="account-list">
+          <!-- As contas registradas serão listadas aqui -->
+        </div>
+        <div id="account-count" class="account-count">
+          <!-- Contador de contas será atualizado aqui -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de confirmação de banimento -->
+  <div id="banModal" class="modal">
+    <div class="modal-content">
+      <h2>Banir Usuário</h2>
+      <p>Você está prestes a banir um usuário. Isso pode ter implicações sérias. Certifique-se de fornecer um motivo válido.</p>
+      <label for="banReason">Motivo do Banimento:</label>
+      <textarea id="banReason" rows="4" placeholder="Digite o motivo do banimento"></textarea>
+
+      <label for="banTime">Tempo de Banimento (em dias):</label>
+      <input type="number" id="banTime" placeholder="Digite o número de dias">
+
+      <div class="ban-permanent">
+        <input type="checkbox" id="permanentBan" name="permanentBan" onclick="toggleBanTime()">
+        <label for="permanentBan">Banimento permanente</label>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+        <button class="btn-confirm" onclick="confirmBan()">Banir</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let selectedUsername = '';
+
+    function listAccounts() {
+      var accountList = document.getElementById('account-list');
+      var accountCount = document.getElementById('account-count');
+      accountList.innerHTML = ''; // Limpa a lista
+
+      var count = 0;
+      for (var i = 0; i < localStorage.length; i++) {
+        var username = localStorage.key(i);
+        if (username.startsWith('banido_')) continue; // Ignora contas banidas
+
+        var accountData = JSON.parse(localStorage.getItem(username));
+
+        // Cria o elemento com as informações do usuário, senha e data de criação
+        var item = document.createElement('div');
+        item.className = 'account-item';
+        item.innerHTML = `
+          <div class="account-info">
+            <span><i class="fas fa-user"></i>Usuário: ${username}</span>
+            <span><i class="fas fa-key"></i>Senha: ${accountData.senha}</span>
+            <span><i class="fas fa-calendar"></i>Data de Criação: ${accountData.dataCriacao}</span>
+            <span><i class="fas fa-id-badge"></i>Tipo: ${accountData.tipo}</span>
+          </div>
+          <button class="btn-ban" onclick="openModal('${username}')"><i class="fas fa-ban"></i>Banir</button>
+        `;
+
+        accountList.appendChild(item);
+        count++;
+      }
+
+      // Verifica se há contas
+      if (count === 0) {
+        accountList.innerHTML = '<div class="no-accounts">Nenhuma conta registrada.</div>';
+      }
+
+      // Atualiza o contador de contas
+      accountCount.textContent = `Total de contas: ${count}`;
+    }
+
+    function openModal(username) {
+      selectedUsername = username;
+      document.getElementById('banModal').style.display = 'block';
+    }
+
+    function closeModal() {
+      document.getElementById('banModal').style.display = 'none';
+      selectedUsername = ''; // Limpa o usuário selecionado
+    }
+
+    function toggleBanTime() {
+      var banTimeInput = document.getElementById('banTime');
+      if (document.getElementById('permanentBan').checked) {
+        banTimeInput.disabled = true;
+        banTimeInput.value = ''; // Limpa o valor de dias
+      } else {
+        banTimeInput.disabled = false;
+      }
+    }
+
+    function confirmBan() {
+      var banReason = document.getElementById('banReason').value;
+      var banTime = document.getElementById('banTime').value;
+      var permanentBan = document.getElementById('permanentBan').checked;
+
+      if (!banReason) {
+        alert('Por favor, forneça um motivo para o banimento.');
+        eturn;
+      }
+
+      if (!permanentBan && (!banTime || banTime <= 0)) {
+        alert('Por favor, forneça um tempo de banimento válido.');
+        return;
+      }
+
+      // Marca o usuário como banido no localStorage
+      var accountData = JSON.parse(localStorage.getItem(selectedUsername));
+      accountData.banido = true;
+      accountData.banReason = banReason;
+      accountData.banTime = permanentBan ? 'permanente' : `${banTime} dias`;
+
+      // Renomeia a chave da conta para incluir 'banido_' como prefixo
+      localStorage.removeItem(selectedUsername);
+      localStorage.setItem(`banido_${selectedUsername}`, JSON.stringify(accountData));
+
+      alert(`Usuário ${selectedUsername} foi banido com sucesso.`);
+      closeModal();
+      listAccounts(); // Atualiza a lista de contas
+    }
+
+    // Inicializa a lista de contas ao carregar a página
+    document.addEventListener('DOMContentLoaded', listAccounts);
+  </script>
+
+</body>
+</html>

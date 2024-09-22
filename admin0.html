@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap');
+
+    body {
+      margin: 0;
+      font-family: 'Noto Sans', sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      padding-bottom: 70px; /* Espaço para a barra de navegação inferior */
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .card h2 {
+      color: #003366;
+      font-size: 1.2em;
+      margin-top: 0;
+    }
+
+    .counter {
+      font-size: 2em;
+      font-weight: bold;
+      color: #003366;
+    }
+
+    .menu-btn {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #003366;
+      color: #ffffff;
+      padding: 10px;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .menu-btn svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 250px;
+      height: 100%;
+      background: #003366;
+      color: #ffffff;
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      box-shadow: -2px 0px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .side-menu.active {
+      transform: translateX(0);
+    }
+
+    .side-menu .close-btn {
+      align-self: flex-end;
+      font-size: 1.5em;
+      cursor: pointer;
+    }
+
+    .side-menu a {
+      color: #ffffff;
+      font-size: 1em;
+      text-decoration: none;
+      font-weight: 600;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      transition: color 0.3s;
+    }
+
+    .side-menu a i {
+      margin-right: 10px;
+    }
+
+    .side-menu a:hover {
+      color: #00ff88;
+    }
+
+    .footer {
+      background: #003366;
+      color: #ffffff;
+      text-align: center;
+      padding: 10px;
+      font-size: 0.9em;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .footer a {
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .footer a:hover {
+      color: #00ff88;
+    }
+
+    .info-card {
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .help-btn {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      background: #007bff;
+      color: #ffffff;
+      padding: 10px 20px;
+      border-radius: 50%;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      font-size: 1.2em;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background 0.3s;
+    }
+
+    .help-btn:hover {
+      background: #0056b3;
+    }
+
+    .help-popup {
+      position: fixed;
+      bottom: 120px;
+      right: 20px;
+      background: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+      width: 300px;
+      padding: 20px;
+      display: none;
+      z-index: 1000;
+    }
+
+    .help-popup.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="menu-btn" onclick="toggleMenu()">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+    </svg>
+  </div>
+
+  <div class="side-menu" id="side-menu">
+    <div class="close-btn" onclick="toggleMenu()">&times;</div>
+    <a href="admin_inicial.html"><i class="fas fa-home"></i> Início</a>
+    <a href="Contas-cadastradas.html"><i class="fas fa-users"></i> Gerenciar Usuários</a>
+    <a href="chamados_admin.html"><i class="fas fa-tasks"></i> Chamados</a>
+    <a href="relatorios_admin.html"><i class="fas fa-file-alt"></i> Relatórios</a>
+    <a href="configuracoes_avancadas.html"><i class="fas fa-cogs"></i> Configurações Avançadas</a>
+  </div>
+
+  <div class="main-content">
+    <div class="card">
+      <h2>Chamados Pendentes</h2>
+      <div class="counter" id="chamadosCounter">0</div>
+    </div>
+
+    <div class="info-card">
+      <div>
+        <h2>Gerenciar Usuários</h2>
+        <p>Adicione, edite ou remova contas de funcionários e administradores.</p>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div>
+        <h2>Relatórios Gerais</h2>
+        <p>Acesse os relatórios completos de desempenho e atividades.</p>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div>
+        <h2>Configurações Avançadas</h2>
+        <p>Gerencie as configurações do sistema, permissões e mais.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="help-btn" onclick="toggleHelpPopup()">
+    <i class="fas fa-question-circle"></i>
+  </div>
+
+  <div class="help-popup" id="help-popup">
+    <div class="popup-header">
+      <span>Ajuda</span>
+      <div class="close-btn" onclick="toggleHelpPopup()">&times;</div>
+    </div>
+    <div class="popup-content">
+      <p>Como podemos ajudar você?</p>
+    </div>
+    <div class="popup-footer">
+      <button class="btn-continue" onclick="continueHelp()">Continuar</button>
+      <button class="btn-completed" onclick="completeHelp()">Concluído</button>
+    </div>
+  </div>
+
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById('side-menu');
+      menu.classList.toggle('active');
+    }
+
+    // Função para atualizar o contador de chamados no painel do admin
+    function updateChamadosCounter() {
+      const chamadosCounter = document.getElementById('chamadosCounter');
+      let chamados = localStorage.getItem('callsCount') || 0;  // Obtém o número de chamados do localStorage
+
+      // Atualiza o texto do contador
+      chamadosCounter.innerText = chamados;
+    }
+
+    window.onload = function() {
+      updateChamadosCounter(); // Atualiza o contador de chamados ao carregar a página
+    };
+
+    function toggleHelpPopup() {
+      const helpPopup = document.getElementById('help-popup');
+      helpPopup.classList.toggle('active');
+    }
+
+    function continueHelp() {
+      alert('Continue com o suporte...');
+      toggleHelpPopup(); // Fecha o popup de ajuda
+    }
+
+    function completeHelp() {
+      alert('Ajuda concluída!');
+      toggleHelpPopup(); // Fecha o popup de ajuda
+    }
+  </script>
+
+  <div class="footer">
+    <span>&copy; 2024 SoftMax. Todos os direitos reservados.</span>
+    <a href="#">Termos de Serviço</a>
+    <a href="#">Política de Privacidade</a>
+  </div>
+</body>
+</html>
